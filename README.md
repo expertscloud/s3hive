@@ -66,13 +66,13 @@ A secure, scalable, and role-based file manager web application built with **Nex
 
 ---
 
-## 🌐 Below docs have one Time Setup on AWS
+## 🌐 Below docs contain the information how can you setup on your aws account
 
 **link**: [https://docs.google.com/document/d/1XGGBUuqvYc7MU7X3idwCKeNqMyRThWZdp6239CIb6fc/edit?tab=t.0]
 
-## 🌐 Environment Variables
+## 🌐 if you are doing it manaully create a env file in the root of front end and backend code
 
-Create a `.env` file in the project root using the following template:
+Create a `.env` file in the front end project
 
 ```env
 PORT=3000
@@ -97,24 +97,22 @@ NEXT_PUBLIC_ACCOUNT_ID=your-aws-account-id
 
 ---
 
-## 📦 Installation & Development
+Create a `.env` file in the backend end project
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/waqasajaz/aws-workspace-access
-cd secure-file-manager
-
-Node.js Version  **v22.14.0**
-# 2. Install dependencies
-npm install
-
-# 3. Create .env from .env.example
-# put your own credential
-cp .env.example .env
-
-# 4. Start development server
-npm run dev
+```env
+APP_KEY=your_app_key
+NODE_ENV=production
+HOST=0.0.0.0
+TZ=UTC
+LOG_LEVEL=info
+AWS_REGION=your_aws_region
+S3_BUCKET=your_bucket_name
+COGNITO_USER_POOL_ID=your_cognito_user_pool_id
+COGNITO_IDENTITY_POOL_ID=your_cognito_identity_pool_id
+NEXT_PUBLIC_ACCOUNT_ID=your-aws-account-id
 ```
+
+---
 
 ## 🧪 Example Scenario
 
