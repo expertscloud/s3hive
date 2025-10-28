@@ -66,13 +66,13 @@ A secure, scalable, and role-based file manager web application built with **Nex
 
 ---
 
-## 🌐 Below docs have one Time Setup on AWS
+## 🌐 Below docs contain the information how can you setup on your aws account
 
 **link**: [https://docs.google.com/document/d/1XGGBUuqvYc7MU7X3idwCKeNqMyRThWZdp6239CIb6fc/edit?tab=t.0]
 
-## 🌐 Environment Variables
+## 🌐 if you are doing it manaully create a env file in the root of front end and backend code
 
-Create a `.env` file in the project root using the following template:
+Create a `.env` file in the front end project
 
 ```env
 PORT=3000
@@ -92,169 +92,25 @@ NEXT_PUBLIC_OAUTH_REDIRECT_SIGNOUT=https://your-app.com/
 NEXT_PUBLIC_S3_REGION=us-east-1
 NEXT_PUBLIC_S3_BUCKET=securefileapp-users-xxxxxxxxxxxx
 
-AWS_ACCESS_KEY=xxxxxxxxxxxxxxxx
-AWS_SECRET_KEY=xxxxxxxxxxxxxxxx
-
 NEXT_PUBLIC_ACCOUNT_ID=your-aws-account-id
 ```
 
 ---
 
-## 📦 Installation & Development
+Create a `.env` file in the backend end project
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/waqasajaz/aws-workspace-access
-cd secure-file-manager
-
-Node.js Version  **v22.14.0**
-# 2. Install dependencies
-npm install
-
-# 3. Create .env from .env.example
-# put your own credential
-cp .env.example .env
-
-# 4. Start development server
-npm run dev
+```env
+APP_KEY=your_app_key
+NODE_ENV=production
+HOST=0.0.0.0
+TZ=UTC
+LOG_LEVEL=info
+AWS_REGION=your_aws_region
+S3_BUCKET=your_bucket_name
+COGNITO_USER_POOL_ID=your_cognito_user_pool_id
+COGNITO_IDENTITY_POOL_ID=your_cognito_identity_pool_id
+NEXT_PUBLIC_ACCOUNT_ID=your-aws-account-id
 ```
-
-# Deployment Guide for EC2
-
-## Overview
-
-This guide will help you deploy a Node.js application to an EC2 instance using PM2 for process management. Follow the steps below to successfully deploy your app.
-
----
-
-## Prerequisites
-
-Before you begin, ensure the following are in place:
-
-1. **EC2 Instance**: Your EC2 instance should be set up and running.
-2. **PM2 Installed**: Make sure PM2 is installed on your EC2 instance to manage the application process. If it is not installed, run the following
-3. **SSH Access**: Ensure you have SSH access to the EC2 instance.
-4. **Node Version Manager (NVM)**: The deployment script uses NVM to manage Node.js versions, so make sure it is available.
-
----
-
-### Example Setup Information
-
-You will need to replace the following placeholders with your actual data:
-
-- **EC2 Public IP**: `0.000.000.000` (Replace with your EC2 instance's public IP address)
-- **EC2 Username**: `ubuntu` (Commonly the default for EC2, change if necessary)
-- **Remote Directory Name**: `your_directory_name` (The directory where your app will be deployed on the EC2 instance)
-
----
-
-## Steps to Deploy
-
-### 1. Navigate to your root directory like
-
-`cd secure-file-manager`
-
-### 2. Prepare the Deployment Script
-
-Make it like eg `deploy_dev.sh` script executable:
-
-```bash
-chmod +x deploy_dev.sh
-```
-
-Then run the deployment script:
-
-```bash
-./deploy_dev.sh
-```
-
-### 3. Deployment Process
-
-During deployment, the script will:
-
-- Install the correct Node.js version using `nvm`.
-- Install the required dependencies using `npm`.
-- Sync the necessary files to the remote EC2 instance (excluding unnecessary directories like `node_modules`, `.git`, etc.).
-- Set up the environment and build the application on the remote server.
-- Restart the application using PM2.
-
----
-
-## `deploy_dev.sh` Script
-
-Here’s the script (`deploy_dev.sh`) that will automate the deployment process:
-
-```bash
-#!/bin/bash
-
-# Load NVM (Node Version Manager)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-
-# Replace these with your actual values
-_front_end_url="https://yourRepo.com"         # Your front-end repository URL
-_remote="0.000.000.000"                       # Your EC2 instance public IP address
-_user="ubuntu"                                # Your EC2 instance username (usually 'ubuntu')
-_remote_directory_name="your_directory_name"  # The directory on your EC2 instance where the app will be deployed
-
-echo "❗❗❗ Name here❗❗❗"
-echo "Local system name: $HOSTNAME"
-echo "Local date and time: $(date)"
-
-# Use the correct Node.js version (e.g., 22)
-nvm use 22
-npm install
-
-# Sync the local files to the EC2 instance (excluding unnecessary directories)
-rsync -rtu --delete --progress "./" --exclude="node_modules" --exclude="tmp" --exclude=".git" --exclude="build" --exclude=".next" $_user@$_remote:/home/ubuntu/$_remote_directory_name
-
-echo
-echo "** Running deployment on remote host: $_remote **"
-echo
-
-# Connect to the remote EC2 instance and run the deployment commands
-ssh -T "$_user"@"$_remote" "bash -s $_remote_directory_name" <<'EOL'
-    # Load NVM (Node Version Manager) on remote server
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    export HOME="/home/ubuntu/"
-
-    # Go to the correct directory where your app is deployed
-    cd /home/ubuntu/$_remote_directory_name
-
-    # Install npm dependencies on remote server
-    npm install
-
-    # Run the build process
-    rm .env
-    cp .env.dev .env
-    npm run build
-
-    # Restart the app using PM2
-    pm2 stop $_remote_directory_name --silent
-    pm2 delete $_remote_directory_name --silent
-    pm2 start npm --name $_remote_directory_name -- run start --time
-    pm2 save
-
-    echo "Deployment completed successfully at: $(date)"
-EOL
-```
-
----
-
-### Explanation of the Script
-
-- **Set up the environment**: The script loads `nvm` to use the correct Node.js version and installs dependencies locally.
-- **File Syncing**: It uses `rsync` to sync the project files to the remote EC2 instance, excluding unnecessary files like `node_modules`, `.git`, etc.
-- **Remote Commands**: On the remote EC2 instance, the script installs dependencies, runs the build process, and restarts the app using PM2 to apply the changes.
-
----
-
-## Final Steps
-
-Once the script completes, your application should be live and running on your EC2 instance under PM2’s process management. You can verify the deployment by checking the application on your EC2 instance's public IP or domain.
 
 ---
 
@@ -294,5 +150,12 @@ IAM policies are dynamically generated and follow AWS best practices for least p
 | IAM Role      | Auto-created and attached                                 |
 | Result        | Users in TeamAlpha can upload/delete inside `team-alpha/` |
 
+---
 
 ---
+
+## 📧 Contact
+
+For support, issues, or feature requests, please contact:
+
+## **Team**: The Experts Cloud
