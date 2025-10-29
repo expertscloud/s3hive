@@ -67,12 +67,19 @@ A secure, scalable, and role-based file manager web application built with **Nex
 ---
 
 ## 🌐 Below docs contain the information how can you setup on your aws account
+🛠 Manual Setup
 
-**link**: [https://docs.google.com/document/d/1XGGBUuqvYc7MU7X3idwCKeNqMyRThWZdp6239CIb6fc/edit?tab=t.0]
+Follow this document to configure all required AWS resources manually.
+Link: https://docs.google.com/document/d/1XGGBUuqvYc7MU7X3idwCKeNqMyRThWZdp6239CIb6fc/edit?tab=t.0
 
-## 🌐 if you are doing it manaully create a env file in the root of front end and backend code
+Note: If you are setting up manually, make sure to create an .env file in the root directories of both the frontend and backend projects.
+This file should include all environment variables specified below
 
-Create a `.env` file in the front end project
+☁️ CloudFormation Setup
+
+For automated deployment using AWS CloudFormation, follow the below document.
+Link: https://docs.google.com/document/d/15ckx4LjorZbDKeRhwvYbJBxODQcRFRTqITt6oooSjl4/edit?tab=t.0#heading=h.3gedw96awg10
+
 
 ```env
 PORT=3000
